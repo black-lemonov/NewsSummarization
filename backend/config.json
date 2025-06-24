@@ -1,0 +1,37 @@
+{
+  "selected_model": "dt",
+  "parsers_configs": [
+    {
+    "site_url": "https://kuban24.tv/news",
+    "article_selector": "div.news-card",
+    "title_selector": "a.news-card-title::text",
+    "url_selector": "a.news-card-title::attr(href)",
+    "date_selector": "div.news-card-head div.news-card-date::text",
+    "content_selector": "div[itemprop=\"description\"] > p::text",
+    "stop_words": [
+        "ТОП", "Гороскоп", "Успейте воспользоваться",
+        "выгодными условиями", "Подробности по телефону",
+        "Читайте также"
+    ],
+    "parse_interval_sec": 10.0,
+    "articles_buffer_size": 30
+    },
+    {
+      "site_url": "https://www.livekuban.ru/news",
+      "article_selector": "div.node--news",
+      "title_selector": "div.node--description span::text",
+      "url_selector": "div.node--description a::attr(href)",
+      "date_selector": "div.date::text",
+      "content_selector": "div.article-content > p::text",
+      "stop_words": [
+          "ТОП", "Гороскоп", "пока вы", "Сроки действия акции", "акции",
+          "Успейте воспользоваться",  "выгодными условиями",
+          "Подробности по телефону", "По вопросам публикаций обращайтесь",
+          "Читайте также"
+      ],
+      "parse_interval_sec": 10.0,
+      "articles_buffer_size": 30
+    }
+  ],
+  "selected_sites_urls": ["https://www.livekuban.ru/news", "https://kuban24.tv/news"]
+}

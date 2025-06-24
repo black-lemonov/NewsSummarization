@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ summary['title'] }}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/detail.css') }}">
+    <link rel="icon" href="{{ url_for('static', filename='favicon.ico') }}">
+</head>
+<body>
+    <div class="container">
+        <h1>{{ summary['title'] }}</h1>
+        
+        <div class="meta">
+            <time datetime="{{summary['created_at']}}">{{ date_formatter(summary['created_at']) }}</time>
+        </div>
+        
+        <p>{{ summary['summary'] }}</p>
+        
+        <div class="actions">
+            <a href="{{ url_for('reactions.handle_reaction', id=summary_id, action='like', state=('remove' if reaction_state['like'] else 'add')) }}">
+                <button class="action-btn like-btn {% if reaction_state['like'] %}active{% endif %}">
+                    👍
+                </button>
+            </a>
+            
+            <a href="{{ url_for('reactions.handle_reaction', id=summary_id, action='dislike', state=('remove' if reaction_state['dislike'] else 'add')) }}">
+                <button class="action-btn dislike-btn {% if reaction_state['dislike'] %}active{% endif %}">
+                    👎
+                </button>
+            </a>
+        </div>
+        
+        <h2>Источники:</h2>
+        <div class="source-list">
+            {% for source in summary['news'] %}
+            <div class="source">
+                <a href="{{ source['url'] }}" target="_blank">{{ source['title'] }}</a>
+            </div>
+            {% endfor %}
+        </div>
+        
+        <a href="{{ url_for('main.index') }}" class="back-link">← Вернуться к списку</a>
+    </div>
+    
+    <script src="{{ url_for('static', filename='js/detail.js') }}"></script>
+</body>
+</html>
