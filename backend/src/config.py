@@ -53,7 +53,7 @@ SUMM_MODELS_FILEPATHS = {
 }
 
 
-load_dotenv(".env")
+load_dotenv("dev.env")
 import os
 
 ADMIN_USERNAME = os.getenv("ADMIN_USERNAME")

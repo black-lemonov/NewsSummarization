@@ -6,7 +6,7 @@ import os
 
 from flask_login import LoginManager, login_user, login_required, logout_user, UserMixin
 
-load_dotenv()
+load_dotenv("dev.env")
 
 app = Flask(__name__)
 
