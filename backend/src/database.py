@@ -4,7 +4,7 @@ from sqlalchemy.ext.asyncio import create_async_engine, async_sessionmaker
 
 import asyncio
 
-from src.models.base import Base
+from src.models import Base
 
 
 engine = create_async_engine("sqlite+aiosqlite:///news.db")

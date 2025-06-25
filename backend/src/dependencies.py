@@ -14,6 +14,7 @@ from src.parsers.parsers_factories import JSONParsersFactory
 from src.summarizers.base_summarizer import BaseSummarizer
 from src.preprocessing.tfidf_vectorizer import StemmedTfidfVectorizer
 from src.summarizers.model_summarizer import ModelSummarizer
+from src.summarizers.tr_summarizer import TRSummarizer
 from src.summarizers.utils.joblib_loader import JoblibLoader
 from src.summarizers.utils.model_selection import get_selected_model_name
 
@@ -47,9 +48,9 @@ def get_clustering_model() -> Pipeline:
 
 
 def get_summarizer() -> BaseSummarizer:
-    model = ModelSummarizer(
-        SUMM_MODELS_FILEPATHS[get_selected_model_name()],
-        JoblibLoader()
-    )
-    return model
+    # model = ModelSummarizer(
+    #     SUMM_MODELS_FILEPATHS[get_selected_model_name()],
+    #     JoblibLoader()
+    # )
+    return TRSummarizer()
 

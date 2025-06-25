@@ -13,6 +13,9 @@ from src.services.news_service import add_news
 
 
 class NewsParser:
+    PARSE_INTERVAL: float = 10.0
+    ARTICLES_BUFFER_SIZE: int = 30
+
     def __init__(
             self,
             site_url: str,
@@ -21,9 +24,7 @@ class NewsParser:
             url_selector: str,
             date_selector: str,
             content_selector: str,
-            stop_words: list[str],
-            parse_interval_sec: float,
-            articles_buffer_size: int
+            stop_words: list[str]
     ) -> None:
         self.__site_url: str = site_url
         self.__article_selector: str = article_selector
@@ -32,9 +33,9 @@ class NewsParser:
         self.__date_selector: str = date_selector
         self.__content_selector: str = content_selector
         self.__stop_words: set[str] = set(stop_words)
-        self.__parse_interval_sec: float = parse_interval_sec
-        self.__articles_buffer: deque[str] = deque(maxlen=articles_buffer_size)   # здесь будет очередь из разных новостей
-        self.__tmp_buffer: deque[str] = deque(maxlen=articles_buffer_size)  # здесь будут все новости с одной страницы
+        self.__parse_interval_sec: float = self.PARSE_INTERVAL
+        self.__articles_buffer: deque[str] = deque(maxlen=self.ARTICLES_BUFFER_SIZE)   # здесь будет очередь из разных новостей
+        self.__tmp_buffer: deque[str] = deque(maxlen=self.ARTICLES_BUFFER_SIZE)  # здесь будут все новости с одной страницы
 
     async def parse(self) -> None:
         print("Отправляю запрос к %s ...", self.__site_url)
@@ -63,7 +64,7 @@ class NewsParser:
                 print("Отправляю запрос к %s ...", self.__site_url)
                 content = await self.__try_get_article_content(client, url)
 
-                if content is None:
+                if content is None or len(content) < 30:
                     continue
 
                 if self.__is_spam(content):
