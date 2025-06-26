@@ -48,9 +48,9 @@ def get_clustering_model() -> Pipeline:
 
 
 def get_summarizer() -> BaseSummarizer:
-    # model = ModelSummarizer(
-    #     SUMM_MODELS_FILEPATHS[get_selected_model_name()],
-    #     JoblibLoader()
-    # )
-    return TRSummarizer()
+    model = ModelSummarizer(
+        SUMM_MODELS_FILEPATHS[get_selected_model_name()],
+        JoblibLoader()
+    )
+    return model
 
