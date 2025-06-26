@@ -1,0 +1,40 @@
+{% extends "admin/base.html" %}
+
+{% block title %}Управление кластерами{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2>Управление кластерами</h2>
+    
+    <div class="card mt-4">
+        <div class="card-header">
+            <h5>Удалить кластер</h5>
+        </div>
+        <div class="card-body">
+            <form method="POST">
+                <div class="mb-3">
+                    <label for="cluster_n" class="form-label">Номер кластера:</label>
+                    <input type="number" class="form-control" id="cluster_n" name="cluster_n" 
+                           placeholder="Введите номер кластера" required min="1">
+                    <div class="form-text">Удаление кластера приведет к удалению всех новостей в этом кластере</div>
+                </div>
+                <button type="submit" name="delete_cluster" class="btn btn-danger">
+                    <i class="bi bi-trash"></i> Удалить кластер
+                </button>
+            </form>
+        </div>
+    </div>
+    
+    <div class="card mt-4">
+        <div class="card-header">
+            <h5>Экспорт данных</h5>
+        </div>
+        <div class="card-body">
+            <p>Скачайте таблицу всех новостей с рефератами в формате CSV.</p>
+            <a href="{{ url_for('admin.admin_export_news') }}" class="btn btn-primary">
+                <i class="bi bi-download"></i> Скачать CSV
+            </a>
+        </div>
+    </div>
+</div>
+{% endblock %}

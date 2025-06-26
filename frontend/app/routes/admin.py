@@ -147,3 +147,44 @@ def admin_system():
             flash('Ошибка при создании реферата', 'danger')
 
     return render_template('admin/system.html', last_parsing_time=last_parsing_time, format_date=format_date)
+
+
+@admin_bp.route('/clusters', methods=['GET', 'POST'])
+@login_required
+def admin_clusters():
+    if request.method == 'POST' and 'delete_cluster' in request.form:
+        cluster_n = request.form['cluster_n']
+        response = requests.delete(
+            f"{BASE_API_URL}/admin/cluster/{cluster_n}",
+            auth=(ADMIN_USERNAME, ADMIN_PASSWORD)
+        )
+        if response.status_code == 200:
+            flash('Кластер успешно удален', 'success')
+        else:
+            flash('Ошибка при удалении кластера', 'danger')
+        return redirect(url_for('admin.admin_clusters'))
+
+    return render_template('admin/clusters.html')
+
+
+@admin_bp.route('/news/export')
+@login_required
+def admin_export_news():
+    response = requests.get(
+        f"{BASE_API_URL}/admin/news/export",
+        auth=(ADMIN_USERNAME, ADMIN_PASSWORD)
+    )
+
+    if response.status_code == 200:
+        output = io.BytesIO()
+        output.write(response.content)
+        output.seek(0)
+        return send_file(
+            output,
+            as_attachment=True,
+            download_name='news_with_summaries.csv',
+            mimetype='text/csv'
+        )
+    else:
+        flash('Ошибка при экспорте новостей', 'danger')
+        return redirect(url_for('admin.admin_news'))

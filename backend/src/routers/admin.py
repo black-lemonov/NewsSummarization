@@ -1,13 +1,18 @@
+import csv
 import json
 import secrets
+from io import StringIO
 
 from fastapi import APIRouter, UploadFile, Depends, HTTPException, status
 from fastapi.params import Security
 from fastapi.security import HTTPBasic, HTTPBasicCredentials
-from starlette.responses import JSONResponse
+from sqlalchemy import delete, select
+from sqlalchemy.orm import selectinload
+from starlette.responses import JSONResponse, Response
 
 from src.config import SUMM_MODELS_FILEPATHS, ADMIN_USERNAME, ADMIN_PASSWORD
 from src.dependencies import SessionDep
+from src.models import News
 from src.parsers.parsers_selection import get_parsers_sites_urls, remove_parser, add_new_parser
 from src.services.bg_service import get_last_parsing_time_from_config, start_bg_task
 from src.services.summaries_service import create_summary_for_news
@@ -100,3 +105,62 @@ async def start_bg_task_():
 async def get_last_parsing_time():
     last_time = get_last_parsing_time_from_config()
     return {"last_parsing_time": last_time}
+
+
+@admin_router.delete("/cluster/{cluster_n}", summary="Удалить кластер")
+async def delete_cluster(cluster_n: int, session: SessionDep):
+    await session.execute(
+        delete(News)
+        .where(News.cluster_n == cluster_n)
+    )
+    await session.commit()
+    return {"status": "OK", "message": "Кластер был удален"}
+
+
+@admin_router.get("/news/export", summary="Скачать таблицу .csv", response_class=Response)
+async def export_news_with_summaries(session: SessionDep):
+        query = (
+            select(News)
+            .options(selectinload(News.summary))
+            .where(News.summary.any())
+
+        )
+        result = await session.execute(query)
+        news_items = result.scalars().all()
+
+        if not news_items:
+            raise HTTPException(status_code=404, detail="Нет новостей с рефератами")
+
+        output = StringIO()
+        writer = csv.writer(output, delimiter=',', quotechar='"', quoting=csv.QUOTE_MINIMAL)
+
+        headers = [
+            "url", "title", "date", "content",
+            "summary_content", "positive_rates", "negative_rates"
+        ]
+        writer.writerow(headers)
+
+        for news in news_items:
+            if not news.summary:
+                continue
+
+            summary = news.summary[0]
+            writer.writerow([
+                news.url,
+                news.title,
+                news.published_at.isoformat(),
+                news.content,
+                summary.content,
+                summary.positive_rates,
+                summary.negative_rates
+            ])
+
+        output.seek(0)
+        return Response(
+            content=output.getvalue(),
+            media_type="text/csv",
+            headers={
+                "Content-Disposition": "attachment; filename=news_with_summaries.csv",
+                "Content-Type": "text/csv; charset=utf-8"
+            }
+        )
