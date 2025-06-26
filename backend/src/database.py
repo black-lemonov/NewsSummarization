@@ -5,9 +5,10 @@ from sqlalchemy.ext.asyncio import create_async_engine, async_sessionmaker
 import asyncio
 
 from src.models import Base
+from src.config import DATABASE_URL
 
 
-engine = create_async_engine("sqlite+aiosqlite:///news.db")
+engine = create_async_engine(DATABASE_URL)
 session_factory = async_sessionmaker(engine, expire_on_commit=False)
 
 

@@ -9,6 +9,8 @@ MIN_SAMPLES = 1
 
 CLUSTER_TTL = timedelta(seconds=10)
 
+DATABASE_URL = "sqlite+aiosqlite:///news.db"
+
 PARSING_INTERVAL = 3600
 
 SUMMARY_SIZE = 3
